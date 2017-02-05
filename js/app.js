@@ -1,256 +1,371 @@
- var headers = ["Book", "Author", "Language", "Published", "Sales"];
-       var data = [
-                    ["The Lord of the Rings", "J. R. R. Tolkien","English", "1954–1955", "150 million"],
-                    ["Le Petit Prince (The Little Prince)", "Antoine de Saint-Exupéry","French", "1943", "140 million"],
-                    ["Harry Potter and the Philosopher's Stone", "J. K. Rowling","English", "1997", "107 million"],
-                    ["And Then There Were None", "Agatha Christie","English", "1939", "100 million"],
-                    ["Dream of the Red Chamber", "Cao Xueqin","Chinese", "1754–1791", "100 million"],
-                    
-                    ["The Hobbit", "J. R. R. Tolkien","English", "1937", "100 million"],
-                    ["She: A History of Adventure", "H. Rider Haggard", "English", "1887", "100 million"],
-       ];
 
-       
-       var Excel = React.createClass({
-            displayName: 'Excel',
-            getInitialState: function(){
-           return {
-                data:this.props.initialData,
-                sortby: null,
-                descending: false,
-                edit: null,
-                search: false,
-                 };
-         },
-         propTypes: {
-             headers: React.PropTypes.arrayOf(
-                React.PropTypes.string
-              ),
-              initialData: React.PropTypes.arrayOf(
-                   React.PropTypes.arrayOf(
-                      React.PropTypes.string
-                )
-              ),
-            },
-           _shot: function(e){
-               var column = e.target.cellIndex;
-               var data = this.state.data.slice();
-               var descending = this.state.sortby  === column  && !this.state.descending;
-                data.sort( function(a,b){
-                   return  descending ? a[column] < b[column]
-                                      : a[column] > b[column] ;
-               }) ;
-               this.setState({
-                   data: data,
-                   sortby:column,
-                   descending: descending,
-               });
+var questions = [
+    ["What is part of a database that holds only one type of information???",'Report' ,'Field','File','B'],
+    ['OS computer abbreviation usually means ???','Open Software ','Optical Sensor','Operating System','C'],
+    ['Which is a type of Electrically-Erasable Programmable Read-Only Memory?' ,'Flash','FRAM','Flange','A'],
+    ['Who developed Yahoo?','Vint Cerf & Robert Kahn','Steve Case & Jeff Bezos','David Filo & Jerry Yang','C'],
+    ['The most common format for a home video recorder is VHS. VHS stands for...??','Video Home System','Very high speed','Voltage house standard','A']
 
-           },
-           _showEditor: function(e){
+] ;
+
+var  pos = 0, correct = 0 , choice ,percentage;
+var quizName , quizDes , quizTime ;
+
+
+var quizRender = React.createClass({
+      
+
+
+     getInitialState: function(){
+         return{
+             correct: this.props.correct,
+             pos: this.props.pos,
+             quesion: this.props.data[pos][0],
+             opt1: this.props.data[pos][1],
+             opt2: this.props.data[pos][2],
+             opt3: this.props.data[pos][3],
+             ans: this.props.data[pos][4],
+         }
+     },
+  
+     _checkAnswer: function(e){
+          choices = document.getElementsByName('answer');
+          console.log(choices);
+          for (var i = 0; i < choices.length; i++) {
+          if(choices[i].checked){
+              choice = choices[i].value;
+          }
+       }
+            if(choice == this.props.data[pos][4]){
+                this.setState({
+                    correct: correct++,
+                })
+                
+            }
+          this.setState({
+            pos: ++pos,
+          }) 
+          if(pos < this.props.data.length){
               this.setState({
-                  edit:{
-                      row: parseInt(e.target.dataset.row, 10),
-                      cell: e.target.cellIndex,
-                  }
-              });
-           },
-           _save: function(e){
-               e.preventDefault();
-               var input = e.target.firstChild;
-               var data = this.state.data.slice();
-               data[this.state.edit.row][this.state.edit.cell] = input.value;
-               this.setState({
-                   edit: null,
-                   data:data,
-               })
+               
+             quesion: this.props.data[pos][0],
+             opt1: this.props.data[pos][1],
+             opt2: this.props.data[pos][2],
+             opt3: this.props.data[pos][3],
+             ans: this.props.data[pos][4],
+            
+        })
+          }
+       
+          
+        
 
-           },
-           _rendreTable : function(){
-             return(
-                   React.DOM.table(null,
-                     React.DOM.thead({onClick: this._shot},
-                       React.DOM.tr(null,
-                         this.props.headers.map(function(title , idx) {
-                           if(this.state.sortby === idx){
-                               title += this.state.descending ? ' \u2191' : ' \u2193'
-                           }
-                          return React.DOM.th({key: idx}, title);
-                         },this)
-                        )
-                     ),
-                       React.DOM.tbody({onDoubleClick: this._showEditor},
-                         this._renderSearch(),
-                         this.state.data.map(function(row , rowidx) {
-                          return (
-                           React.DOM.tr({key: rowidx},
-                              row.map(function(cell, idx) {
-                                  var content = cell;
-                                  var edit = this.state.edit;
-                                  if(edit && edit.row ===  rowidx && edit.cell === idx){
-                                      content = React.DOM.form({onSubmit: this._save},
-                                      React.DOM.input({
-                                          type:'text',
-                                          defaultValue: content,
-                                      })
-                                      )
-                                  }
+     },
+     _showQuestion: function(){
+           
+            if(this.state.pos >= this.props.data.length){
+               percentage = correct*20;
+              return React.DOM.div(
+                    {
+                        id:'complete'
+                    },
+                    React.DOM.span({className:'resultBox'},
+                      React.DOM.h2(null, "PERCENTAGE"),
+                      React.DOM.h2(null, percentage + ' %')
+                      ),
+                     React.DOM.span({className:'resultBox'},
+                      React.DOM.h2(null, "CORRECT ANSWER"),
+                      React.DOM.h2(null, correct)
+                      )
+                 )
+             } else {
+                
+                 return  React.DOM.div(
+                         null,
+                          React.DOM.div(
+                             {
+                                 id:'status'
+                             },
+                            React.DOM.h1(null,"QUESTION "+ (this.state.pos+1) +" OF " +this.props.data.length )
+                          ),
+                         React.DOM.h4(
+                             {
+                                 id:'question'
+                             }, (this.state.pos+1) +'.  '+this.state.quesion),
+                         React.DOM.div(
+                             null,
+                             React.DOM.input(
+                                 {
+                                    type: "radio",
+                                    className:'optionBtn',
+                                    name: 'answer',
+                                    value:'A'
+                                 }
+                             ),
+                              this.state.opt1,
+                              React.DOM.br(null),
+                              React.DOM.input(
+                                 {
+                                    type: "radio",
+                                    className:'optionBtn',
+                                    name: 'answer',
+                                    value:'B'                          
+                                 }
+                             ),
+                             this.state.opt2,
+                             React.DOM.br(null),
+                              React.DOM.input(
+                                 {
+                                    type: "radio",
+                                    className:'optionBtn',
+                                    name: 'answer',
+                                    value:'C'
+                                 }
+                             ),
+                             this.state.opt3
+                         ),
+                         React.DOM.button(
+                                 {
+                                    id:'nextBtn', 
+                                    type: "button",
+                                    onClick: this._checkAnswer
+                                 },
+                                 'NEXT'
+                             )
+                     );
+             }
+         
+                 
+     },
+     render: function(){
+         return React.DOM.div(
+             null,
+             React.DOM.div( 
+                    {
+                    id: 'header'
+                    },
+                    React.DOM.h1(null," QUIZ  GAME  COMPUTER  SCIENCE")
+             ),
+             React.DOM.div(
+                 null,
+                
+                 React.DOM.div(
+                     {
+                        id:'test'
+                     },
+                     this._showQuestion() 
+                  )  
+             )
+         )
+     }
+});
 
-                                return React.DOM.td({
-                                    key: idx,
-                                    'data-row': rowidx
-                                }, content);
-                            },this)
-                          )
-                         );
-                      },this)
-                  )   
-                )
-               );
-           },
-           _renderSearch: function(){
-               if(!this.state.search){
-                   return null;
-                   console.log('asdsa')
-               }
-               return (
-                   React.DOM.tr({onChange:this._search},
-                      this.props.headers.map(function(_ignor, idx){
-                        return React.DOM.td({key:idx},
-                           React.DOM.input({
-                              type: 'text',
-                             'data-idx': idx,
-                             })
-                          )
-                       })
-                   )
+
+// component for main
+var MainPage = React.createClass({
+    getInitialState:function(){
+        return {
+            initialData:this.props.initialData,
+        }
+
+    },
+
+    // createQuestion function for insert question
+     _createQuestion: function(){
+        // return React.DOM.div({id:'createQuestion'},
+        //        React.DOM.div(null,
+                
+        //           React.DOM.form(
+        //               {
+                        
+        //               },
+                       
+        //               React.DOM.input(
+        //                   {
+        //                       type:'text',
+        //                       id:'addQuestion',
+                              
+        //                   }),
+                          
+        //               React.DOM.input(
+        //                   {
+        //                       type:'text',
+        //                       id:'addOpt1'
+        //                   }),
+        //                React.DOM.input(
+        //                   {
+        //                       type:'text',
+        //                       id:'addOpt2'
+        //                   }),
+        //              React.DOM.input(
+        //                   {
+        //                       type:'text',
+        //                       id:'addOpt3'
+        //                   })
+                                               
+        //               )
+        //        )
+        //     )
+        
+    },
+       
+        // for addQuestion
+    _saveQuestion: function(){
+       var quizName = document.getElementById('quizName').value; 
+       var addQues = document.getElementById('addQuestion').value;
+       var addOpt1 = document.getElementById('addOpt1').value;
+       var addOpt2 = document.getElementById('addOpt2').value;
+       var addOpt3 = document.getElementById('addOpt3').value;
+       var addAns = document.getElementById('addAns').value;
+       addAns = addAns.toUpperCase;
+          
+         
+        
+       
+       var data = this.state.initialData;
+       data.push([addQues,addOpt1,addOpt2,addOpt3,addAns])
+        console.log(data)
+       this.setState({
+           initialData : data
+
+       })
+      
+      
+    
+ },
+
+    // createQuiz
+    _createQuiz: function(){
+       return (
+           
+              React.createElement(quizRender,
+                {
+                    data: this.state.initialData,
+                    pos: pos,
+                    correct: correct,
+                }
                )
 
-           },
-           // for search 
-           _search: function(e){
-             var needle = e.target.value.toLowerCase();
-             if(!needle){
-                 this.setState({data:this._preSearchData});
-                 return;
-             }
-             var idx = e.target.dataset.idx;
-             var searchData = this._preSearchData.filter(function(row){
-                return row[idx].toString().toLowerCase().indexOf(needle) > -1;
-             }) 
-             this.setState({data: searchData});
-           },
-           // for toggle search fields
-            _preSearchData: null,
-           _toggleSearch: function() {
-            if (this.state.search) {
-                this.setState({
-                    data: this._preSearchData,
-                     search: false,
-                 });
-                this._preSearchData = null;
-          } else {
-              this._preSearchData = this.state.data;
-              this.setState({
-                search: true,
-                 });
-                }
-           },    
-           // for render Tool bar
-           
-           _renderToolbar: function(){
-             return(
-                 React.DOM.div({id:'tool-bar'},
-                 React.DOM.button(
-                     {
-                         className:'search-btn',
-                         onClick: this._toggleSearch
-                      },
-                     "search"
-                 ),
-                  React.DOM.a({
-                      className:'download-btn',
-                     onClick: this._download.bind(this, 'json'),
-                     href: 'data.json'
-                  }, 'Export JSON'),
-                  React.DOM.a({
-                     className:'download-btn',
-                     onClick: this._download.bind(this, 'csv'),
-                     href: 'data.csv'
-                  },  'Export CSV'))
+          )
+    },
+    render: function(){
+        return (
+            React.DOM.div(null,
+               React.DOM.div(null,
+                  React.DOM.button({
+                      id: 'createQuiz',
+                      type: 'submit',
+                      onClick:  this._createQuestion
+                  },'Create Quiz'),
+                  
+                  React.DOM.button({
+                      id: 'createQuiz',
+                      type: 'submit',
+                      onClick: this._createQuiz
+      
+                  },'Attempt Quiz'),
+                   React.DOM.div(
+                      null,
+                       
+                       React.DOM.input(
+                          {
+                              type: 'text',
+                              id:'quizName',
+                              placeholder: 'Quiz name'
+
+                          }),
+                      React.DOM.input(
+                          {
+                              type: 'text',
+                              id:'quizDes',
+                              placeholder: 'Quiz Description'
+
+                          }), 
+                    React.DOM.input(
+                          {
+                              type: 'text',
+                              id:'quizTime',
+                              placeholder: 'Quiz Time'
+
+                          }),
+
+                      React.DOM.input(
+                          {
+                              type: 'text',
+                              id:'addQuestion',
+                              placeholder: ' Write Question'
+                              
+                          }),
+                          
+                      React.DOM.input(
+                          {
+                              type: 'text',
+                              id:'addOpt1',
+                              placeholder: 'Option One'
+
+                          }),
+                       React.DOM.input(
+                          {
+                              type: 'text',
+                              id:'addOpt2',
+                              placeholder: 'Option two'
+                          }),
+                     React.DOM.input(
+                          {
+                              type:'text',
+                              id:'addOpt3',
+                              placeholder: 'Option three'
+                          }),
+                     React.DOM.input(
+                          {
+                              type:'text',
+                              id:'addAns',
+                              placeholder: 'Answer'
+                          }),     
+                     React.DOM.input(
+                         {
+                             type : 'submit',
+                             value: 'submit',
+                             name: 'submit',
+                             onClick: this._saveQuestion
  
-             );
-           },
-           // for reply
-            _log: [],
-            _logSetState: function(newState) {
-                // remember the old state in a clone
-                this._log.push(JSON.parse(JSON.stringify(
-                    this._log.length === 0 ? this.state : newState
-                )));
-                  this.setState(newState);
-           },
-           _replay: function() {
-               if (this._log.length === 0) {
-                  console.warn('No state to replay yet');
-                  return;
-               }
-             var idx = -1;
-             var interval = setInterval(function() {
-               idx++;
-              if (idx === this._log.length - 1) { // the end
-                 clearInterval(interval);
-               }
-             this.setState(this._log[idx]);
-               }.bind(this), 1000);
-            },
-
-           componentDidMount: function() {
-              document.onkeydown = function(e) {
-                if (e.altKey && e.shiftKey && e.keyCode === 82) { // ALT+SHIFT+R(eplay)
-                  this._replay();
+                         })
+                                               
+                   ),
+                   React.createElement(quizRender,
+                {
+                    data: questions,
+                    pos: pos,
+                    correct: correct,
                 }
-              }.bind(this);
-            },
-            // for download  file
-           
-         _download: function(format, ev) {
-            var contents = format === 'json'
-                ? JSON.stringify(this.state.data)
-                : this.state.data.reduce(function(result, row) {
-                   return result
-                        + row.reduce(function(rowresult, cell, idx) {
-                        return rowresult
-                            + '"'
-                            + cell.replace(/"/g, '""')
-                            + '"'
-                            + (idx < row.length - 1 ? ',' : '');
-                        }, '')
-                     + "\n";
-                  }, '');
-                 var URL = window.URL || window.webkitURL;
-                 var blob = new Blob([contents], {type: 'text/' + format});
-                 ev.target.href = URL.createObjectURL(blob);
-                 ev.target.download = 'data.' + format;
-            },
+               )
+                  
+                 
+
+               )
+            )
+        )
+    }
+})
 
 
-
-           render: function(){
-             return (
-                React.DOM.div(null,
-                this._renderToolbar(),
-                this._rendreTable()
-                )
-             );
-           }
-       });
+ReactDOM.render(
+    React.DOM.div(
+       null,
+    //    React.createElement(quizRender,
+    //    {
+    //        data: questions,
+    //        pos: pos,
+    //        correct: correct,
+    //    }
+    //    )
+    React.createElement(MainPage,
+    {
+        initialData: questions,
+        qName : quizName
        
-       ReactDOM.render(
-           React.createElement(Excel ,{
-               headers: headers,
-               initialData: data,
-           }),
-           document.getElementById('app')
-       );
-       
+    })
+    
+    ),
+    document.getElementById('app')
+);

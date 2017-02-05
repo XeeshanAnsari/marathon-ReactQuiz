@@ -1,23 +1,78 @@
-#tool-bar{
-  width: 100%;
-  padding: 20px;
+body{
+    margin: 0px;
+    padding: 0px;
+    
 }
-.download-btn{
+#header{
     background: blue;
-    text-decoration: none;
-    width: 50px;
-    height: 30px;
-    padding: 10px;
-    margin: 10px;
-    border-radius: 10px 10px;
+    box-shadow: 5px 5px  5px #333333;
+    text-align: center;
+    width: 98%;
+    padding: 1%;
     color: white;
-    font-weight: bold;
+    
 }
-.search-btn{
-  width: 100px;
-  padding: 8px;
-  background: blue;
-   border-radius: 10px 10px;
-    color: white;
-    font-weight: bold;
+
+.wellcome{
+    margin-top: 50px;
+    text-align: center;
+}
+.wellcome button{
+    padding: 1% 2%;
+    background: #aaaaaa;
+    border: 1px solid #999999;
+    border-radius: 2px 2px;
+}
+
+#status{
+    text-align: center;
+    padding: 1%;
+    background: slategray;
+}
+
+#test{
+    width: 80%;
+    margin: 2% auto   ;
+    padding: 2%;
+    min-height: 370px;
+    background: #eeeeee;
+    position: relative;
+}
+#question{
+    margin-bottom: 5%;
+    padding-bottom: 1%;
+    border-bottom: 1px solid #aaaaaa;
+}
+.optionBtn{
+    
+    margin: 1%;
+}
+#nextBtn{
+    position: absolute;
+    top: 85%;
+    left: 90%;
+    padding: 1% 2%;
+    background: #aaaaaa;
+    border: 1px solid #999999;
+    border-radius: 2px 2px;
+    
+}
+
+#complete{
+    text-align: center;
+    padding: 5%;
+    margin: 5% auto;
+}
+.resultBox{
+    width: 50%;
+    background: blue
+ 
+}
+
+#footer{
+    
+    text-align: center;
+    width: 98%;
+    color: #333333;
+     
 }
