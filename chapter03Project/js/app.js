@@ -127,6 +127,7 @@
                )
 
            },
+           // for search 
            _search: function(e){
              var needle = e.target.value.toLowerCase();
              if(!needle){
@@ -139,6 +140,7 @@
              }) 
              this.setState({data: searchData});
            },
+           // for toggle search fields
             _preSearchData: null,
            _toggleSearch: function() {
             if (this.state.search) {
@@ -154,7 +156,7 @@
                  });
                 }
            },    
-
+           // for render Tool bar
            _renderToolbar: function(){
              return(
                  React.DOM.button(
@@ -166,6 +168,39 @@
                  )
              );
            },
+           // for reply
+            _log: [],
+            _logSetState: function(newState) {
+                // remember the old state in a clone
+                this._log.push(JSON.parse(JSON.stringify(
+                    this._log.length === 0 ? this.state : newState
+                )));
+                  this.setState(newState);
+           },
+           _replay: function() {
+               if (this._log.length === 0) {
+                  console.warn('No state to replay yet');
+                  return;
+               }
+             var idx = -1;
+             var interval = setInterval(function() {
+               idx++;
+              if (idx === this._log.length - 1) { // the end
+                 clearInterval(interval);
+               }
+             this.setState(this._log[idx]);
+               }.bind(this), 1000);
+            },
+
+           componentDidMount: function() {
+              document.onkeydown = function(e) {
+                if (e.altKey && e.shiftKey && e.keyCode === 82) { // ALT+SHIFT+R(eplay)
+                  this._replay();
+                }
+              }.bind(this);
+            },
+
+
 
            render: function(){
              return (
