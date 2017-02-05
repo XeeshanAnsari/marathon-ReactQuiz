@@ -18,6 +18,7 @@
                 data:this.props.initialData,
                 sortby: null,
                 descending: false,
+                edit: null
                  };
          },
          propTypes: {
@@ -45,6 +46,14 @@
                });
 
            },
+           _showEditor: function(e){
+              this.setState({
+                  edit:{
+                      row: parseInt(e.target.dataset.row, 10),
+                      cell: e.target.cellIndex,
+                  }
+              });
+           },
            render: function(){
                return(
                    React.DOM.table(null,
@@ -58,16 +67,26 @@
                          },this)
                         )
                      ),
-                       React.DOM.tbody(null,
+                       React.DOM.tbody({onDoubleClick: this._showEditor},
                          this.state.data.map(function(row , rowidx) {
                           return (
                            React.DOM.tr({key: rowidx},
                               row.map(function(cell, idx) {
-                                  
+                                  var content = cell;
+                                  var edit = this.state.edit;
+                                  if(edit && edit.row ===  rowidx && edit.cell === idx){
+                                      content = React.DOM.form({onSubmit: this._save},
+                                      React.DOM.input({
+                                          type:'text',
+                                          defaultValue: content,
+                                      })
+                                      )
+                                  }
+
                                 return React.DOM.td({
                                     key: idx,
-                                    
-                                }, cell);
+                                    'data-row': rowidx
+                                }, content);
                             },this)
                           )
                          );
