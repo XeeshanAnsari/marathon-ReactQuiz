@@ -157,15 +157,28 @@
                 }
            },    
            // for render Tool bar
+           
            _renderToolbar: function(){
              return(
+                 React.DOM.div(null,
                  React.DOM.button(
                      {
+                         className:'download-btn',
                          onClick: this._toggleSearch
-
-                     },
+                      },
                      "search"
-                 )
+                 ),
+                  React.DOM.a({
+                      className:'download-btn',
+                     onClick: this._download.bind(this, 'json'),
+                     href: 'data.json'
+                  }, 'Export JSON'),
+                  React.DOM.a({
+                     className:'download-btn',
+                     onClick: this._download.bind(this, 'csv'),
+                     href: 'data.csv'
+                  },  'Export CSV'))
+ 
              );
            },
            // for reply
@@ -198,6 +211,27 @@
                   this._replay();
                 }
               }.bind(this);
+            },
+            // for download  file
+           
+         _download: function(format, ev) {
+            var contents = format === 'json'
+                ? JSON.stringify(this.state.data)
+                : this.state.data.reduce(function(result, row) {
+                   return result
+                        + row.reduce(function(rowresult, cell, idx) {
+                        return rowresult
+                            + '"'
+                            + cell.replace(/"/g, '""')
+                            + '"'
+                            + (idx < row.length - 1 ? ',' : '');
+                        }, '')
+                     + "\n";
+                  }, '');
+                 var URL = window.URL || window.webkitURL;
+                 var blob = new Blob([contents], {type: 'text/' + format});
+                 ev.target.href = URL.createObjectURL(blob);
+                 ev.target.download = 'data.' + format;
             },
 
 
