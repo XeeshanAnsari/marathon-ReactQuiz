@@ -160,10 +160,10 @@
            
            _renderToolbar: function(){
              return(
-                 React.DOM.div(null,
+                 React.DOM.div({id:'tool-bar'},
                  React.DOM.button(
                      {
-                         className:'download-btn',
+                         className:'search-btn',
                          onClick: this._toggleSearch
                       },
                      "search"

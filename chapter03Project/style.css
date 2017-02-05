@@ -1,10 +1,23 @@
-.download-btn:link{
+#tool-bar{
+  width: 100%;
+  padding: 20px;
+}
+.download-btn{
     background: blue;
+    text-decoration: none;
     width: 50px;
     height: 30px;
     padding: 10px;
     margin: 10px;
     border-radius: 10px 10px;
+    color: white;
+    font-weight: bold;
+}
+.search-btn{
+  width: 100px;
+  padding: 8px;
+  background: blue;
+   border-radius: 10px 10px;
     color: white;
     font-weight: bold;
 }
