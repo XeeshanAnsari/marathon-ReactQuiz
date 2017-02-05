@@ -18,7 +18,8 @@
                 data:this.props.initialData,
                 sortby: null,
                 descending: false,
-                edit: null
+                edit: null,
+                search: false,
                  };
          },
          propTypes: {
@@ -65,9 +66,8 @@
                })
 
            },
-
-           render: function(){
-               return(
+           _rendreTable : function(){
+             return(
                    React.DOM.table(null,
                      React.DOM.thead({onClick: this._shot},
                        React.DOM.tr(null,
@@ -80,6 +80,7 @@
                         )
                      ),
                        React.DOM.tbody({onDoubleClick: this._showEditor},
+                         this._renderSearch(),
                          this.state.data.map(function(row , rowidx) {
                           return (
                            React.DOM.tr({key: rowidx},
@@ -106,6 +107,62 @@
                   )   
                 )
                );
+           },
+           _renderSearch: function(){
+               if(!this.state.search){
+                   return null;
+                   console.log('asdsa')
+               }
+               return (
+                   React.DOM.tr({onChange:this._search},
+                      this.props.headers.map(function(_ignor, idx){
+                        return React.DOM.td({key:idx},
+                           React.DOM.input({
+                              type:'text',
+                             'data_idx': idx,
+                             })
+                          )
+                       })
+                   )
+               )
+
+           },
+           
+            _preSearchData: null,
+           _toggleSearch: function() {
+            if (this.state.search) {
+                this.setState({
+                    data: this._preSearchData,
+                     search: false,
+                 });
+                this._preSearchData = null;
+          } else {
+              this._preSearchData = this.state.data;
+              this.setState({
+                search: true,
+                 });
+                }
+           },    
+
+           _renderToolbar: function(){
+             return(
+                 React.DOM.button(
+                     {
+                         onClick: this._toggleSearch
+
+                     },
+                     "search"
+                 )
+             );
+           },
+
+           render: function(){
+             return (
+                React.DOM.div(null,
+                this._renderToolbar(),
+                this._rendreTable()
+                )
+             );
            }
        });
        
