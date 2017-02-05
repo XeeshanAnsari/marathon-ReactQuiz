@@ -118,8 +118,8 @@
                       this.props.headers.map(function(_ignor, idx){
                         return React.DOM.td({key:idx},
                            React.DOM.input({
-                              type:'text',
-                             'data_idx': idx,
+                              type: 'text',
+                             'data-idx': idx,
                              })
                           )
                        })
@@ -127,7 +127,18 @@
                )
 
            },
-           
+           _search: function(e){
+             var needle = e.target.value.toLowerCase();
+             if(!needle){
+                 this.setState({data:this._preSearchData});
+                 return;
+             }
+             var idx = e.target.dataset.idx;
+             var searchData = this._preSearchData.filter(function(row){
+                return row[idx].toString().toLowerCase().indexOf(needle) > -1;
+             }) 
+             this.setState({data: searchData});
+           },
             _preSearchData: null,
            _toggleSearch: function() {
             if (this.state.search) {
