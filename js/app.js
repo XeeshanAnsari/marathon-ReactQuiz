@@ -1,15 +1,15 @@
 
 var questions = [
-    ["What is part of a database that holds only one type of information???",'Report' ,'Field','File','B'],
-    ['OS computer abbreviation usually means ???','Open Software ','Optical Sensor','Operating System','C'],
-    ['Which is a type of Electrically-Erasable Programmable Read-Only Memory?' ,'Flash','FRAM','Flange','A'],
-    ['Who developed Yahoo?','Vint Cerf & Robert Kahn','Steve Case & Jeff Bezos','David Filo & Jerry Yang','C'],
-    ['The most common format for a home video recorder is VHS. VHS stands for...??','Video Home System','Very high speed','Voltage house standard','A']
+     ["What is part of a database that holds only one type of information???",'Report' ,'Field','File','B']
+    // ['OS computer abbreviation usually means ???','Open Software ','Optical Sensor','Operating System','C'],
+    // ['Which is a type of Electrically-Erasable Programmable Read-Only Memory?' ,'Flash','FRAM','Flange','A'],
+    // ['Who developed Yahoo?','Vint Cerf & Robert Kahn','Steve Case & Jeff Bezos','David Filo & Jerry Yang','C'],
+    // ['The most common format for a home video recorder is VHS. VHS stands for...??','Video Home System','Very high speed','Voltage house standard','A']
 
 ] ;
 
 var  pos = 0, correct = 0 , choice ,percentage;
-var quizName , quizDes , quizTime ;
+var  quizDes , quizTime ;
 
 
 var quizRender = React.createClass({
@@ -18,6 +18,7 @@ var quizRender = React.createClass({
 
      getInitialState: function(){
          return{
+             qName: this.props.quizName,
              correct: this.props.correct,
              pos: this.props.pos,
              quesion: this.props.data[pos][0],
@@ -64,7 +65,7 @@ var quizRender = React.createClass({
      _showQuestion: function(){
            
             if(this.state.pos >= this.props.data.length){
-               percentage = correct*20;
+            percentage = Math.round((correct/this.props.data.length) * 100);
               return React.DOM.div(
                     {
                         id:'complete'
@@ -144,7 +145,7 @@ var quizRender = React.createClass({
                     {
                     id: 'header'
                     },
-                    React.DOM.h1(null," QUIZ  GAME  COMPUTER  SCIENCE")
+                    React.DOM.h1(null, this.state.qName)
              ),
              React.DOM.div(
                  null,
@@ -166,6 +167,8 @@ var MainPage = React.createClass({
     getInitialState:function(){
         return {
             initialData:this.props.initialData,
+            qName: this.props.qName,
+            addQuiz: false
         }
 
     },
@@ -217,7 +220,7 @@ var MainPage = React.createClass({
        var addOpt2 = document.getElementById('addOpt2').value;
        var addOpt3 = document.getElementById('addOpt3').value;
        var addAns = document.getElementById('addAns').value;
-       addAns = addAns.toUpperCase;
+       addAns = addAns.toUpperCase();
           
          
         
@@ -226,10 +229,11 @@ var MainPage = React.createClass({
        data.push([addQues,addOpt1,addOpt2,addOpt3,addAns])
         console.log(data)
        this.setState({
-           initialData : data
+           initialData : data,
+            qName : quizName,
 
        })
-      
+     console.log(quizName)
       
     
  },
@@ -240,7 +244,8 @@ var MainPage = React.createClass({
            
               React.createElement(quizRender,
                 {
-                    data: this.state.initialData,
+                    data: questions,
+                    quizName: this.state.qName,
                     pos: pos,
                     correct: correct,
                 }
@@ -335,6 +340,7 @@ var MainPage = React.createClass({
                    React.createElement(quizRender,
                 {
                     data: questions,
+                    quizName: this.state.qName,
                     pos: pos,
                     correct: correct,
                 }
@@ -362,7 +368,7 @@ ReactDOM.render(
     React.createElement(MainPage,
     {
         initialData: questions,
-        qName : quizName
+        qName : 'Quiz Game'
        
     })
     
